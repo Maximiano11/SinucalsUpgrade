@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Upgrade de Skills</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e2f;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 15px;
+      color: #ffd700;
+    }
+    .player-form input, .player-form button {
+      padding: 8px;
+      margin: 5px;
+    }
+    #players {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 20px;
+    }
+    .player-card {
+      background: #2c2c44;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .skills {
+      margin-top: 10px;
+    }
+    .skill {
+      display: flex;
+      justify-content: space-between;
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+    }
+    .btn-up {
+      background: #4caf50;
+      color: white;
+      font-size: 12px;
+      padding: 3px 8px;
+    }
+    .btn-up:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    .points {
+      font-size: 13px;
+      margin-top: 5px;
+      color: #90ee90;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Sistema de Upgrade de Skills</h1>
+
+  <div class="player-form">
+    <input type="text" id="playerName" placeholder="Nome do jogador">
+    <button onclick="addPlayer()">Adicionar Jogador</button>
+  </div>
+
+  <div id="players"></div>
+
+  <script>
+    const skills = ["Força", "Inteligência", "Mira", "Precisão", "Malandragem"];
+    let players = [];
+
+    function addPlayer() {
+      const name = document.getElementById("playerName").value.trim();
+      if (!name) return alert("Digite um nome válido!");
+
+      const player = {
+        name,
+        points: 5,
+        skills: {
+          "Força": 0,
+          "Inteligência": 0,
+          "Mira": 0,
+          "Precisão": 0,
+          "Malandragem": 0
+        }
+      };
+
+      players.push(player);
+      document.getElementById("playerName").value = "";
+      renderPlayers();
+    }
+
+    function upgradeSkill(playerIndex, skill) {
+      let player = players[playerIndex];
+      if (player.points > 0) {
+        player.skills[skill]++;
+        player.points--;
+        renderPlayers();
+      }
+    }
+
+    function renderPlayers() {
+      const container = document.getElementById("players");
+      container.innerHTML = "";
+
+      players.forEach((player, index) => {
+        let card = document.createElement("div");
+        card.className = "player-card";
+
+        let html = `<h2>${player.name}</h2>`;
+        html += `<p class="points">Pontos disponíveis: ${player.points}</p>`;
+        html += `<div class="skills">`;
+        skills.forEach(skill => {
+          html += `
+            <div class="skill">
+              <span>${skill}: ${player.skills[skill]}</span>
+              <button class="btn-up" onclick="upgradeSkill(${index}, '${skill}')" ${player.points === 0 ? 'disabled' : ''}>+</button>
+            </div>
+          `;
+        });
+        html += `</div>`;
+
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
